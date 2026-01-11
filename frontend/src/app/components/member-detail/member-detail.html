@@ -1,0 +1,64 @@
+<div class="container mt-4" *ngIf="member">
+  <div class="row">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="card-title">{{ member.name }}</h2>
+          <hr>
+          <div class="mb-3">
+            <strong>Email:</strong> {{ member.email }}
+          </div>
+          <div class="mb-3">
+            <strong>Membership ID:</strong> {{ member.membershipId }}
+          </div>
+          <div class="mb-3">
+            <strong>Role:</strong>
+            <span class="badge bg-primary ms-2">{{ member.role }}</span>
+          </div>
+          <div class="mb-3" *ngIf="getBorrowedBooks().length > 0 || getBorrowedBookIds().length > 0">
+            <strong>Borrowed Books:</strong>
+            <ul class="list-group mt-2">
+              <li class="list-group-item" *ngFor="let book of getBorrowedBooks()">
+                {{ book.title }} by {{ book.author }}
+              </li>
+              <li class="list-group-item" *ngFor="let bookId of getBorrowedBookIds()">
+                Book ID: {{ bookId }}
+              </li>
+            </ul>
+          </div>
+          <div class="mt-4">
+            <button class="btn btn-secondary" routerLink="/members">Back to List</button>
+            <button
+              *ngIf="authService.isAdmin()"
+              class="btn btn-primary ms-2"
+              [routerLink]="['/members', member._id || member.id, 'edit']"
+            >
+              Edit
+            </button>
+            <button
+              *ngIf="authService.isAdmin()"
+              class="btn btn-danger ms-2"
+              (click)="deleteMember()"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="loading-spinner" *ngIf="isLoading">
+  <div class="spinner-border text-primary" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
+
+<div class="container mt-4" *ngIf="!isLoading && !member">
+  <div class="alert alert-danger">
+    <h4>Member Not Found</h4>
+    <p>The member you're looking for doesn't exist or has been removed.</p>
+    <button class="btn btn-secondary" routerLink="/members">Back to Members List</button>
+  </div>
+</div>

@@ -1,0 +1,86 @@
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header">
+          <h3>{{ isEditMode ? 'Edit Member' : 'Create New Member' }}</h3>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="memberForm" (ngSubmit)="onSubmit()">
+            <div class="mb-3">
+              <label for="name" class="form-label">Name</label>
+              <input
+                type="text"
+                class="form-control"
+                id="name"
+                formControlName="name"
+                [class.is-invalid]="memberForm.get('name')?.invalid && memberForm.get('name')?.touched"
+              />
+              <div class="invalid-feedback" *ngIf="memberForm.get('name')?.invalid && memberForm.get('name')?.touched">
+                Name is required and must be at least 2 characters
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input
+                type="email"
+                class="form-control"
+                id="email"
+                formControlName="email"
+                [class.is-invalid]="memberForm.get('email')?.invalid && memberForm.get('email')?.touched"
+              />
+              <div class="invalid-feedback" *ngIf="memberForm.get('email')?.invalid && memberForm.get('email')?.touched">
+                Valid email is required
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="membershipId" class="form-label">Membership ID</label>
+              <input
+                type="text"
+                class="form-control"
+                id="membershipId"
+                formControlName="membershipId"
+                [class.is-invalid]="memberForm.get('membershipId')?.invalid && memberForm.get('membershipId')?.touched"
+              />
+              <div class="invalid-feedback" *ngIf="memberForm.get('membershipId')?.invalid && memberForm.get('membershipId')?.touched">
+                Membership ID is required
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="role" class="form-label">Role</label>
+              <select
+                class="form-select"
+                id="role"
+                formControlName="role"
+              >
+                <option value="Member">Member</option>
+                <option value="Admin">Admin</option>
+              </select>
+            </div>
+
+            <div class="alert alert-danger" *ngIf="errorMessage">
+              {{ errorMessage }}
+            </div>
+
+            <div class="d-flex gap-2">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                [disabled]="memberForm.invalid || isLoading"
+              >
+                <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+                {{ isLoading ? 'Saving...' : (isEditMode ? 'Update' : 'Create') }}
+              </button>
+              <button type="button" class="btn btn-secondary" routerLink="/members">
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

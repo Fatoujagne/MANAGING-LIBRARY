@@ -1,0 +1,79 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Books Dashboard</h2>
+    <a routerLink="/books/new" class="btn btn-primary">Add New Book</a>
+  </div>
+
+  <div class="row mb-4">
+    <div class="col-md-4">
+      <div class="card text-white bg-primary">
+        <div class="card-body">
+          <h5 class="card-title">Total Books</h5>
+          <h2>{{ stats.total }}</h2>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-white bg-success">
+        <div class="card-body">
+          <h5 class="card-title">Available</h5>
+          <h2>{{ stats.available }}</h2>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-white bg-danger">
+        <div class="card-body">
+          <h5 class="card-title">Unavailable</h5>
+          <h2>{{ stats.unavailable }}</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="loading-spinner" *ngIf="isLoading">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <div class="card" *ngIf="!isLoading">
+    <div class="card-body">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>ISBN</th>
+            <th>Category</th>
+            <th>Availability</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngIf="books.length === 0 && !isLoading">
+            <td colspan="6" class="text-center py-4">
+              <p class="text-muted">No books found. <a routerLink="/books/new">Add a new book</a></p>
+            </td>
+          </tr>
+          <tr *ngFor="let book of books">
+            <td>{{ book.title }}</td>
+            <td>{{ book.author }}</td>
+            <td>{{ book.ISBN }}</td>
+            <td>{{ book.category }}</td>
+            <td>
+              <span class="badge" [ngClass]="book.availability ? 'bg-success' : 'bg-danger'">
+                {{ book.availability ? 'Available' : 'Unavailable' }}
+              </span>
+            </td>
+            <td>
+              <a [routerLink]="['/books', book._id || book.id]" class="btn btn-sm btn-info me-1">View</a>
+              <a [routerLink]="['/books', book._id || book.id, 'edit']" class="btn btn-sm btn-warning me-1">Edit</a>
+              <button class="btn btn-sm btn-danger" (click)="deleteBook(book._id || book.id || '')">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

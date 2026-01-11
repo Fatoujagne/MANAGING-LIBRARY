@@ -1,0 +1,33 @@
+<div class="container mt-4">
+  <h2 class="mb-4">Members</h2>
+
+  <div class="loading-spinner" *ngIf="isLoading">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <div class="row" *ngIf="!isLoading">
+    <div class="col-md-6 mb-4" *ngFor="let member of members">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">{{ member.name }}</h5>
+          <p class="card-text">
+            <strong>Email:</strong> {{ member.email }}<br>
+            <strong>Membership ID:</strong> {{ member.membershipId }}<br>
+            <strong>Role:</strong> 
+            <span class="badge" [ngClass]="member.role === 'Admin' ? 'bg-danger' : 'bg-primary'">
+              {{ member.role }}
+            </span><br>
+            <strong>Borrowed Books:</strong> {{ member.borrowedBooks?.length || 0 }}
+          </p>
+          <a [routerLink]="['/members', member._id || member.id]" class="btn btn-primary btn-sm">View Details</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!isLoading && members.length === 0" class="alert alert-info">
+    No members found. Members will appear here once they register.
+  </div>
+</div>

@@ -1,0 +1,100 @@
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header">
+          <h3>{{ isEditMode ? 'Edit Book' : 'Create New Book' }}</h3>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="bookForm" (ngSubmit)="onSubmit()">
+            <div class="mb-3">
+              <label for="title" class="form-label">Title</label>
+              <input
+                type="text"
+                class="form-control"
+                id="title"
+                formControlName="title"
+                [class.is-invalid]="bookForm.get('title')?.invalid && bookForm.get('title')?.touched"
+              />
+              <div class="invalid-feedback" *ngIf="bookForm.get('title')?.invalid && bookForm.get('title')?.touched">
+                Title is required
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="author" class="form-label">Author</label>
+              <input
+                type="text"
+                class="form-control"
+                id="author"
+                formControlName="author"
+                [class.is-invalid]="bookForm.get('author')?.invalid && bookForm.get('author')?.touched"
+              />
+              <div class="invalid-feedback" *ngIf="bookForm.get('author')?.invalid && bookForm.get('author')?.touched">
+                Author is required
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="ISBN" class="form-label">ISBN</label>
+              <input
+                type="text"
+                class="form-control"
+                id="ISBN"
+                formControlName="ISBN"
+                [class.is-invalid]="bookForm.get('ISBN')?.invalid && bookForm.get('ISBN')?.touched"
+              />
+              <div class="invalid-feedback" *ngIf="bookForm.get('ISBN')?.invalid && bookForm.get('ISBN')?.touched">
+                ISBN is required
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="category" class="form-label">Category</label>
+              <input
+                type="text"
+                class="form-control"
+                id="category"
+                formControlName="category"
+                [class.is-invalid]="bookForm.get('category')?.invalid && bookForm.get('category')?.touched"
+              />
+              <div class="invalid-feedback" *ngIf="bookForm.get('category')?.invalid && bookForm.get('category')?.touched">
+                Category is required
+              </div>
+            </div>
+
+            <div class="mb-3 form-check">
+              <input
+                type="checkbox"
+                class="form-check-input"
+                id="availability"
+                formControlName="availability"
+              />
+              <label class="form-check-label" for="availability">
+                Available
+              </label>
+            </div>
+
+            <div class="alert alert-danger" *ngIf="errorMessage">
+              {{ errorMessage }}
+            </div>
+
+            <div class="d-flex gap-2">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                [disabled]="bookForm.invalid || isLoading"
+              >
+                <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+                {{ isLoading ? 'Saving...' : (isEditMode ? 'Update' : 'Create') }}
+              </button>
+              <button type="button" class="btn btn-secondary" routerLink="/books">
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

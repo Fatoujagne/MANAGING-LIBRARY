@@ -1,0 +1,61 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Books</h2>
+  </div>
+
+  <div class="row mb-3">
+    <div class="col-md-6">
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Search by title, author, or ISBN..."
+        [(ngModel)]="searchTerm"
+        (input)="onSearch()"
+      />
+    </div>
+    <div class="col-md-4">
+      <select
+        class="form-select"
+        [(ngModel)]="selectedCategory"
+        (change)="onCategoryChange()"
+      >
+        <option value="">All Categories</option>
+        <option *ngFor="let category of getCategories()" [value]="category">
+          {{ category }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <div class="loading-spinner" *ngIf="isLoading">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <div class="row" *ngIf="!isLoading">
+    <div class="col-md-4 mb-4" *ngFor="let book of filteredBooks">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title">{{ book.title }}</h5>
+          <p class="card-text">
+            <strong>Author:</strong> {{ book.author }}<br>
+            <strong>ISBN:</strong> {{ book.ISBN }}<br>
+            <strong>Category:</strong> {{ book.category }}<br>
+            <span class="badge" [ngClass]="book.availability ? 'bg-success' : 'bg-danger'">
+              {{ book.availability ? 'Available' : 'Unavailable' }}
+            </span>
+          </p>
+          <a [routerLink]="['/books', book._id || book.id]" class="btn btn-primary btn-sm">View Details</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!isLoading && filteredBooks.length === 0 && books.length === 0" class="alert alert-info">
+    No books found in the library.
+  </div>
+  <div *ngIf="!isLoading && filteredBooks.length === 0 && books.length > 0" class="alert alert-warning">
+    No books match your search criteria. Try adjusting your filters.
+  </div>
+</div>

@@ -1,0 +1,58 @@
+<div class="container mt-4" *ngIf="book">
+  <div class="row">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="card-title">{{ book.title }}</h2>
+          <hr>
+          <div class="mb-3">
+            <strong>Author:</strong> {{ book.author }}
+          </div>
+          <div class="mb-3">
+            <strong>ISBN:</strong> {{ book.ISBN }}
+          </div>
+          <div class="mb-3">
+            <strong>Category:</strong> {{ book.category }}
+          </div>
+          <div class="mb-3">
+            <strong>Availability:</strong>
+            <span class="badge ms-2" [ngClass]="book.availability ? 'bg-success' : 'bg-danger'">
+              {{ book.availability ? 'Available' : 'Unavailable' }}
+            </span>
+          </div>
+          <div class="mt-4">
+            <button class="btn btn-secondary" routerLink="/books">Back to List</button>
+            <button
+              *ngIf="authService.isAdmin()"
+              class="btn btn-primary ms-2"
+              [routerLink]="['/books', book._id || book.id, 'edit']"
+            >
+              Edit
+            </button>
+            <button
+              *ngIf="authService.isAdmin()"
+              class="btn btn-danger ms-2"
+              (click)="deleteBook()"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="loading-spinner" *ngIf="isLoading">
+  <div class="spinner-border text-primary" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
+
+<div class="container mt-4" *ngIf="!isLoading && !book">
+  <div class="alert alert-danger">
+    <h4>Book Not Found</h4>
+    <p>The book you're looking for doesn't exist or has been removed.</p>
+    <button class="btn btn-secondary" routerLink="/books">Back to Books List</button>
+  </div>
+</div>

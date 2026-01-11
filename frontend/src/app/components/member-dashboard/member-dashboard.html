@@ -1,0 +1,79 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Members Dashboard</h2>
+    <a routerLink="/members/new" class="btn btn-primary">Add New Member</a>
+  </div>
+
+  <div class="row mb-4">
+    <div class="col-md-4">
+      <div class="card text-white bg-primary">
+        <div class="card-body">
+          <h5 class="card-title">Total Members</h5>
+          <h2>{{ stats.total }}</h2>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-white bg-info">
+        <div class="card-body">
+          <h5 class="card-title">Admins</h5>
+          <h2>{{ stats.admins }}</h2>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-white bg-success">
+        <div class="card-body">
+          <h5 class="card-title">Regular Members</h5>
+          <h2>{{ stats.regularMembers }}</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="loading-spinner" *ngIf="isLoading">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <div class="card" *ngIf="!isLoading">
+    <div class="card-body">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Membership ID</th>
+            <th>Role</th>
+            <th>Borrowed Books</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngIf="members.length === 0 && !isLoading">
+            <td colspan="6" class="text-center py-4">
+              <p class="text-muted">No members found. <a routerLink="/members/new">Add a new member</a></p>
+            </td>
+          </tr>
+          <tr *ngFor="let member of members">
+            <td>{{ member.name }}</td>
+            <td>{{ member.email }}</td>
+            <td>{{ member.membershipId }}</td>
+            <td>
+              <span class="badge" [ngClass]="member.role === 'Admin' ? 'bg-danger' : 'bg-primary'">
+                {{ member.role }}
+              </span>
+            </td>
+            <td>{{ member.borrowedBooks?.length || 0 }}</td>
+            <td>
+              <a [routerLink]="['/members', member._id || member.id]" class="btn btn-sm btn-info me-1">View</a>
+              <a [routerLink]="['/members', member._id || member.id, 'edit']" class="btn btn-sm btn-warning me-1">Edit</a>
+              <button class="btn btn-sm btn-danger" (click)="deleteMember(member._id || member.id || '')">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
