@@ -4,6 +4,12 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
+/**
+ * Register Component
+ * 
+ * Handles new user registration.
+ * Displays clear error notifications for registration failures.
+ */
 @Component({
   selector: 'app-register',
   standalone: true,
@@ -15,6 +21,7 @@ export class RegisterComponent {
   registerForm: FormGroup;
   errorMessage: string = '';
   isLoading: boolean = false;
+  showError: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -29,10 +36,18 @@ export class RegisterComponent {
     });
   }
 
+  /**
+   * Handle form submission
+   * Validates form and attempts to register new user
+   */
   onSubmit(): void {
+    // Clear previous errors
+    this.clearError();
+    
     if (this.registerForm.valid) {
       this.isLoading = true;
       this.errorMessage = '';
+      this.showError = false;
 
       this.authService.register(this.registerForm.value).subscribe({
         next: (response) => {
@@ -52,9 +67,68 @@ export class RegisterComponent {
         error: (error) => {
           console.error('Registration error:', error);
           this.isLoading = false;
-          this.errorMessage = error.error?.message || error.error?.errors?.[0]?.msg || error.message || 'Registration failed. Please try again.';
+          this.handleRegistrationError(error);
         }
       });
+    } else {
+      // Mark all fields as touched to show validation errors
+      Object.keys(this.registerForm.controls).forEach(key => {
+        this.registerForm.get(key)?.markAsTouched();
+      });
     }
+  }
+
+  /**
+   * Handle registration errors and display appropriate messages
+   */
+  private handleRegistrationError(error: any): void {
+    let message = 'Registration failed. Please try again.';
+    
+    // Check for different error types
+    if (error.error) {
+      // Backend error message
+      if (error.error.message) {
+        message = error.error.message;
+      } else if (error.error.errors && Array.isArray(error.error.errors)) {
+        // Validation errors from backend
+        message = error.error.errors.map((e: any) => e.msg || e.message).join(', ');
+      } else if (typeof error.error === 'string') {
+        message = error.error;
+      }
+    } else if (error.message) {
+      // Network or other errors
+      if (error.message.includes('Http failure') || error.message.includes('Network')) {
+        message = 'Network error. Please check your connection and try again.';
+      } else {
+        message = error.message;
+      }
+    }
+    
+    // Handle specific HTTP status codes
+    if (error.status === 400) {
+      if (message.includes('already exists') || message.includes('duplicate')) {
+        message = 'An account with this email already exists. Please use a different email or try logging in.';
+      }
+    } else if (error.status === 0) {
+      message = 'Unable to connect to server. Please check your connection.';
+    } else if (error.status >= 500) {
+      message = 'Server error. Please try again later.';
+    }
+    
+    this.errorMessage = message;
+    this.showError = true;
+    
+    // Auto-hide error after 5 seconds
+    setTimeout(() => {
+      this.clearError();
+    }, 5000);
+  }
+
+  /**
+   * Clear error message and hide notification
+   */
+  clearError(): void {
+    this.showError = false;
+    this.errorMessage = '';
   }
 }

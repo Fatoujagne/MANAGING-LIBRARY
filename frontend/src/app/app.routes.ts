@@ -28,7 +28,7 @@ export const routes: Routes = [
   {
     path: 'books/new',
     loadComponent: () => import('./components/book-form/book-form').then(m => m.BookFormComponent),
-    canActivate: [authGuard, adminGuard]
+    canActivate: [authGuard] // Any authenticated user can request to add books
   },
   {
     path: 'books/:id',
@@ -61,14 +61,14 @@ export const routes: Routes = [
     canActivate: [authGuard, adminGuard]
   },
   {
-    path: 'admin',
-    children: [
-      {
-        path: 'dashboard',
-        loadComponent: () => import('./components/book-dashboard/book-dashboard').then(m => m.BookDashboardComponent),
-        canActivate: [authGuard, adminGuard]
-      }
-    ]
+    path: 'admin/dashboard',
+    loadComponent: () => import('./components/book-dashboard/book-dashboard').then(m => m.BookDashboardComponent),
+    canActivate: [authGuard, adminGuard]
+  },
+  {
+    path: 'admin/pending-books',
+    loadComponent: () => import('./components/pending-books/pending-books').then(m => m.PendingBooksComponent),
+    canActivate: [authGuard, adminGuard]
   },
   {
     path: '**',

@@ -6,13 +6,14 @@
           <h3 class="mb-0">User Profile</h3>
         </div>
         <div class="card-body">
-          <div class="loading-spinner" *ngIf="isLoading">
+          <div class="loading-spinner" *ngIf="isLoading && !user">
             <div class="spinner-border text-primary" role="status">
               <span class="visually-hidden">Loading...</span>
             </div>
+            <p class="mt-2 text-muted">Loading profile...</p>
           </div>
 
-          <div *ngIf="!isLoading && user">
+          <div *ngIf="user">
             <div class="row mb-3">
               <div class="col-sm-3"><strong>Name:</strong></div>
               <div class="col-sm-9">{{ user.name }}</div>
@@ -33,10 +34,22 @@
               <div class="col-sm-3"><strong>Member Since:</strong></div>
               <div class="col-sm-9">{{ user.createdAt | date:'medium' }}</div>
             </div>
+            <div class="alert alert-info mt-3" *ngIf="isLoading">
+              <small>Refreshing profile data...</small>
+            </div>
           </div>
 
-          <div *ngIf="!isLoading && !user" class="alert alert-danger">
+          <div *ngIf="!isLoading && !user && errorMessage" class="alert alert-danger">
             <h5>Error Loading Profile</h5>
+            <p>{{ errorMessage }}</p>
+            <div class="d-flex gap-2">
+              <button class="btn btn-primary" (click)="loadProfile()">Retry</button>
+              <button class="btn btn-secondary" routerLink="/login">Go to Login</button>
+            </div>
+          </div>
+
+          <div *ngIf="!isLoading && !user && !errorMessage" class="alert alert-warning">
+            <h5>No Profile Data</h5>
             <p>Unable to load your profile information. Please try logging out and logging back in.</p>
             <button class="btn btn-secondary" routerLink="/login">Go to Login</button>
           </div>

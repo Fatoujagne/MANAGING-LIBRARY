@@ -31,4 +31,16 @@ export class BookService {
   deleteBook(id: string): Observable<{ success: boolean; message: string }> {
     return this.http.delete<{ success: boolean; message: string }>(`${this.apiUrl}/${id}`);
   }
+
+  getPendingBooks(): Observable<BooksResponse> {
+    return this.http.get<BooksResponse>(`${this.apiUrl}/pending`);
+  }
+
+  approveBook(id: string): Observable<BookResponse> {
+    return this.http.put<BookResponse>(`${this.apiUrl}/${id}/approve`, {});
+  }
+
+  rejectBook(id: string): Observable<BookResponse> {
+    return this.http.put<BookResponse>(`${this.apiUrl}/${id}/reject`, {});
+  }
 }

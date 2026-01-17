@@ -1,0 +1,64 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Pending Book Requests</h2>
+    <a routerLink="/books" class="btn btn-secondary">Back to Books</a>
+  </div>
+
+  <div class="alert alert-info" *ngIf="pendingBooks.length === 0 && !isLoading && !errorMessage">
+    <strong>No pending requests:</strong> All book requests have been reviewed.
+  </div>
+
+  <div class="alert alert-danger" *ngIf="errorMessage">
+    <strong>Error:</strong> {{ errorMessage }}
+  </div>
+
+  <div class="loading-spinner" *ngIf="isLoading">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <div class="row" *ngIf="!isLoading && pendingBooks.length > 0">
+    <div class="col-12 mb-3">
+      <div class="alert alert-warning">
+        <strong>{{ pendingBooks.length }}</strong> book request(s) waiting for approval
+      </div>
+    </div>
+    <div class="col-md-6 mb-4" *ngFor="let book of pendingBooks">
+      <div class="card h-100 border-warning">
+        <div class="card-header bg-warning text-dark">
+          <h5 class="card-title mb-0">{{ book.title }}</h5>
+          <small class="text-muted">Status: Pending Approval</small>
+        </div>
+        <div class="card-body">
+          <p class="card-text">
+            <strong>Author:</strong> {{ book.author }}<br>
+            <strong>ISBN:</strong> {{ book.ISBN }}<br>
+            <strong>Category:</strong> {{ book.category }}<br>
+            <strong>Requested by:</strong> 
+            <span *ngIf="book.requestedBy">{{ book.requestedBy.name }} ({{ book.requestedBy.email }})</span>
+            <span *ngIf="!book.requestedBy">Unknown</span><br>
+            <strong>Requested on:</strong> {{ formatDate(book.createdAt) }}
+          </p>
+          <div class="d-flex gap-2">
+            <button 
+              class="btn btn-success btn-sm" 
+              (click)="approveBook(book._id || book.id)">
+              ✓ Approve
+            </button>
+            <button 
+              class="btn btn-danger btn-sm" 
+              (click)="rejectBook(book._id || book.id)">
+              ✗ Reject
+            </button>
+            <a 
+              [routerLink]="['/books', book._id || book.id]" 
+              class="btn btn-info btn-sm">
+              View Details
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

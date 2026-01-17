@@ -20,8 +20,39 @@
               {{ book.availability ? 'Available' : 'Unavailable' }}
             </span>
           </div>
+          <div class="mb-3" *ngIf="book.approvalStatus">
+            <strong>Approval Status:</strong>
+            <span class="badge ms-2" 
+                  [ngClass]="{
+                    'bg-warning': book.approvalStatus === 'pending',
+                    'bg-success': book.approvalStatus === 'approved',
+                    'bg-danger': book.approvalStatus === 'rejected'
+                  }">
+              {{ book.approvalStatus | titlecase }}
+            </span>
+          </div>
+          <div class="mb-3" *ngIf="book.requestedBy">
+            <strong>Requested by:</strong> {{ book.requestedBy.name }} ({{ book.requestedBy.email }})
+          </div>
+          <div class="alert alert-warning" *ngIf="book.approvalStatus === 'pending' && authService.isAdmin()">
+            <strong>Pending Approval:</strong> This book is waiting for admin approval.
+          </div>
           <div class="mt-4">
             <button class="btn btn-secondary" routerLink="/books">Back to List</button>
+            <button
+              *ngIf="authService.isAdmin() && book.approvalStatus === 'pending'"
+              class="btn btn-success ms-2"
+              (click)="approveBook()"
+            >
+              ✓ Approve
+            </button>
+            <button
+              *ngIf="authService.isAdmin() && book.approvalStatus === 'pending'"
+              class="btn btn-danger ms-2"
+              (click)="rejectBook()"
+            >
+              ✗ Reject
+            </button>
             <button
               *ngIf="authService.isAdmin()"
               class="btn btn-primary ms-2"

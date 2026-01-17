@@ -1,79 +1,256 @@
-<div class="container mt-4">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>Books Dashboard</h2>
-    <a routerLink="/books/new" class="btn btn-primary">Add New Book</a>
-  </div>
-
-  <div class="row mb-4">
-    <div class="col-md-4">
-      <div class="card text-white bg-primary">
-        <div class="card-body">
-          <h5 class="card-title">Total Books</h5>
-          <h2>{{ stats.total }}</h2>
-        </div>
-      </div>
+<div class="dashboard-container">
+  <!-- Dashboard Header -->
+  <div class="dashboard-header">
+    <div class="header-content">
+      <h1 class="dashboard-title">
+        <span class="title-icon">📚</span>
+        LibraryManagement Dashboard
+      </h1>
+      <p class="dashboard-subtitle">Your Digital Library at a Glance</p>
     </div>
-    <div class="col-md-4">
-      <div class="card text-white bg-success">
-        <div class="card-body">
-          <h5 class="card-title">Available</h5>
-          <h2>{{ stats.available }}</h2>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="card text-white bg-danger">
-        <div class="card-body">
-          <h5 class="card-title">Unavailable</h5>
-          <h2>{{ stats.unavailable }}</h2>
-        </div>
-      </div>
+    <div class="header-actions">
+      <a routerLink="/admin/pending-books" class="btn btn-warning btn-action">
+        <span class="btn-icon">⏳</span>
+        Review Pending
+        <span class="badge badge-pending" *ngIf="stats.pending > 0">{{ stats.pending }}</span>
+      </a>
+      <a routerLink="/books/new" class="btn btn-primary btn-action">
+        <span class="btn-icon">➕</span>
+        Add New Collection
+      </a>
     </div>
   </div>
 
-  <div class="loading-spinner" *ngIf="isLoading">
-    <div class="spinner-border text-primary" role="status">
-      <span class="visually-hidden">Loading...</span>
+  <!-- Statistics Cards -->
+  <div class="stats-grid">
+    <!-- Total Collections Card -->
+    <div class="stat-card stat-card-primary">
+      <div class="stat-icon">📖</div>
+      <div class="stat-content">
+        <h3 class="stat-value">{{ stats.total }}</h3>
+        <p class="stat-label">Total Collections</p>
+        <div class="stat-trend">
+          <span class="trend-up">All time</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Available Collections Card -->
+    <div class="stat-card stat-card-success">
+      <div class="stat-icon">✅</div>
+      <div class="stat-content">
+        <h3 class="stat-value">{{ stats.available }}</h3>
+        <p class="stat-label">Available Now</p>
+        <div class="stat-trend">
+          <span class="trend-up">{{ getAvailabilityPercentage() }}% available</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pending Requests Card -->
+    <div class="stat-card stat-card-warning">
+      <div class="stat-icon">⏳</div>
+      <div class="stat-content">
+        <h3 class="stat-value">{{ stats.pending }}</h3>
+        <p class="stat-label">Pending Requests</p>
+        <div class="stat-trend">
+          <span class="trend-warning" *ngIf="stats.pending > 0">Needs review</span>
+          <span class="trend-up" *ngIf="stats.pending === 0">All clear</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Categories Card -->
+    <div class="stat-card stat-card-info">
+      <div class="stat-icon">🏷️</div>
+      <div class="stat-content">
+        <h3 class="stat-value">{{ stats.categories }}</h3>
+        <p class="stat-label">Categories</p>
+        <div class="stat-trend">
+          <span class="trend-up">Diverse collection</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Members Card -->
+    <div class="stat-card stat-card-purple">
+      <div class="stat-icon">👥</div>
+      <div class="stat-content">
+        <h3 class="stat-value">{{ stats.totalMembers }}</h3>
+        <p class="stat-label">Active Members</p>
+        <div class="stat-trend">
+          <span class="trend-up">Community growing</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Unavailable Card -->
+    <div class="stat-card stat-card-danger">
+      <div class="stat-icon">🔒</div>
+      <div class="stat-content">
+        <h3 class="stat-value">{{ stats.unavailable }}</h3>
+        <p class="stat-label">Currently Unavailable</p>
+        <div class="stat-trend">
+          <span class="trend-down">In use</span>
+        </div>
+      </div>
     </div>
   </div>
 
-  <div class="card" *ngIf="!isLoading">
-    <div class="card-body">
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Author</th>
-            <th>ISBN</th>
-            <th>Category</th>
-            <th>Availability</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngIf="books.length === 0 && !isLoading">
-            <td colspan="6" class="text-center py-4">
-              <p class="text-muted">No books found. <a routerLink="/books/new">Add a new book</a></p>
-            </td>
-          </tr>
-          <tr *ngFor="let book of books">
-            <td>{{ book.title }}</td>
-            <td>{{ book.author }}</td>
-            <td>{{ book.ISBN }}</td>
-            <td>{{ book.category }}</td>
-            <td>
-              <span class="badge" [ngClass]="book.availability ? 'bg-success' : 'bg-danger'">
-                {{ book.availability ? 'Available' : 'Unavailable' }}
+  <!-- Main Content Grid -->
+  <div class="content-grid" *ngIf="!isLoading">
+    <!-- Recent Collections Section -->
+    <div class="content-card">
+      <div class="card-header-modern">
+        <h3 class="card-title-modern">
+          <span class="title-icon-small">🆕</span>
+          Recent Additions
+        </h3>
+        <a routerLink="/books" class="view-all-link">View All →</a>
+      </div>
+      <div class="card-body-modern">
+        <div *ngIf="recentBooks.length === 0" class="empty-state">
+          <div class="empty-icon">📭</div>
+          <p>No collections yet. Start building your library!</p>
+          <a routerLink="/books/new" class="btn btn-primary btn-sm">Add First Collection</a>
+        </div>
+        <div class="recent-items" *ngIf="recentBooks.length > 0">
+          <div class="recent-item" *ngFor="let book of recentBooks">
+            <div class="item-icon">📚</div>
+            <div class="item-details">
+              <h4 class="item-title">{{ book.title }}</h4>
+              <p class="item-meta">{{ book.author }} • {{ book.category }}</p>
+            </div>
+            <div class="item-status">
+              <span class="badge-modern" 
+                    [ngClass]="{
+                      'badge-success': book.approvalStatus === 'approved',
+                      'badge-warning': book.approvalStatus === 'pending',
+                      'badge-danger': book.approvalStatus === 'rejected'
+                    }">
+                {{ book.approvalStatus || 'approved' | titlecase }}
               </span>
-            </td>
-            <td>
-              <a [routerLink]="['/books', book._id || book.id]" class="btn btn-sm btn-info me-1">View</a>
-              <a [routerLink]="['/books', book._id || book.id, 'edit']" class="btn btn-sm btn-warning me-1">Edit</a>
-              <button class="btn btn-sm btn-danger" (click)="deleteBook(book._id || book.id || '')">Delete</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+            </div>
+            <a [routerLink]="['/books', book._id || book.id]" class="item-action">View →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top Categories Section -->
+    <div class="content-card">
+      <div class="card-header-modern">
+        <h3 class="card-title-modern">
+          <span class="title-icon-small">🏆</span>
+          Top Categories
+        </h3>
+      </div>
+      <div class="card-body-modern">
+        <div *ngIf="topCategories.length === 0" class="empty-state">
+          <div class="empty-icon">📊</div>
+          <p>No categories yet</p>
+        </div>
+        <div class="categories-list" *ngIf="topCategories.length > 0">
+          <div class="category-item" *ngFor="let category of topCategories; let i = index">
+            <div class="category-rank">{{ i + 1 }}</div>
+            <div class="category-info">
+              <h4 class="category-name">{{ category.name }}</h4>
+              <div class="category-bar">
+                <div class="category-bar-fill" 
+                     [style.width.%]="(category.count / stats.total) * 100">
+                </div>
+              </div>
+            </div>
+            <div class="category-count">{{ category.count }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Collections Management Table -->
+  <div class="content-card full-width" *ngIf="!isLoading">
+    <div class="card-header-modern">
+      <h3 class="card-title-modern">
+        <span class="title-icon-small">📋</span>
+        Collections Management
+      </h3>
+      <div class="header-actions-small">
+        <a routerLink="/books" class="btn btn-sm btn-outline-primary">View All</a>
+        <a routerLink="/books/new" class="btn btn-sm btn-primary">Add New</a>
+      </div>
+    </div>
+    <div class="card-body-modern">
+      <div class="table-responsive">
+        <table class="table-modern">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Author</th>
+              <th>Category</th>
+              <th>Status</th>
+              <th>Availability</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngIf="books.length === 0">
+              <td colspan="6" class="empty-table">
+                <div class="empty-state">
+                  <div class="empty-icon">📚</div>
+                  <p>No collections found. <a routerLink="/books/new">Add your first collection</a></p>
+                </div>
+              </td>
+            </tr>
+            <tr *ngFor="let book of books.slice(0, 10)">
+              <td class="table-title">{{ book.title }}</td>
+              <td>{{ book.author }}</td>
+              <td>
+                <span class="category-badge">{{ book.category }}</span>
+              </td>
+              <td>
+                <span class="badge-modern" 
+                      [ngClass]="{
+                        'badge-success': book.approvalStatus === 'approved',
+                        'badge-warning': book.approvalStatus === 'pending',
+                        'badge-danger': book.approvalStatus === 'rejected'
+                      }">
+                  {{ (book.approvalStatus || 'approved') | titlecase }}
+                </span>
+              </td>
+              <td>
+                <span class="badge-modern" 
+                      [ngClass]="book.availability ? 'badge-success' : 'badge-danger'">
+                  {{ book.availability ? 'Available' : 'Unavailable' }}
+                </span>
+              </td>
+              <td class="table-actions">
+                <a [routerLink]="['/books', book._id || book.id]" 
+                   class="btn-action-small btn-view" 
+                   title="View Details">👁️</a>
+                <a [routerLink]="['/books', book._id || book.id, 'edit']" 
+                   class="btn-action-small btn-edit" 
+                   title="Edit">✏️</a>
+                <button class="btn-action-small btn-delete" 
+                        (click)="deleteBook(book._id || book.id || '')" 
+                        title="Delete">🗑️</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="table-footer" *ngIf="books.length > 10">
+        <p class="text-muted">Showing 10 of {{ books.length }} collections</p>
+        <a routerLink="/books" class="btn btn-sm btn-outline-primary">View All Collections</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-overlay" *ngIf="isLoading">
+    <div class="loading-spinner-large">
+      <div class="spinner"></div>
+      <p>Loading dashboard...</p>
     </div>
   </div>
 </div>

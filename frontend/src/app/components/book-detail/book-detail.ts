@@ -64,4 +64,44 @@ export class BookDetailComponent implements OnInit {
       });
     }
   }
+
+  approveBook(): void {
+    if (!this.bookId) return;
+    if (confirm('Are you sure you want to approve this book? It will become visible to all users.')) {
+      this.bookService.approveBook(this.bookId).subscribe({
+        next: (response) => {
+          if (response.success) {
+            alert('Book approved successfully!');
+            this.loadBook(); // Reload to show updated status
+          } else {
+            alert('Error: ' + (response.message || 'Failed to approve book'));
+          }
+        },
+        error: (error) => {
+          console.error('Error approving book:', error);
+          alert('Error: ' + (error.error?.message || 'Failed to approve book. Please try again.'));
+        }
+      });
+    }
+  }
+
+  rejectBook(): void {
+    if (!this.bookId) return;
+    if (confirm('Are you sure you want to reject this book request? It will not be visible to users.')) {
+      this.bookService.rejectBook(this.bookId).subscribe({
+        next: (response) => {
+          if (response.success) {
+            alert('Book rejected successfully!');
+            this.loadBook(); // Reload to show updated status
+          } else {
+            alert('Error: ' + (response.message || 'Failed to reject book'));
+          }
+        },
+        error: (error) => {
+          console.error('Error rejecting book:', error);
+          alert('Error: ' + (error.error?.message || 'Failed to reject book. Please try again.'));
+        }
+      });
+    }
+  }
 }

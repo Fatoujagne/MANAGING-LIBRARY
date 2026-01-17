@@ -1,6 +1,6 @@
-# Library Management System - Backend API
+# LibraryManagement - Backend API
 
-A RESTful API backend for a library management system built with Node.js, Express.js, and MongoDB.
+A RESTful API backend for LibraryManagement, a modern digital library platform built with Node.js, Express.js, and MongoDB.
 
 ## Features
 

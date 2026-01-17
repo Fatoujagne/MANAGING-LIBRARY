@@ -6,6 +6,18 @@ export interface Book {
   ISBN: string;
   category: string;
   availability: boolean;
+  approvalStatus?: 'pending' | 'approved' | 'rejected';
+  requestedBy?: {
+    _id: string;
+    name: string;
+    email: string;
+  };
+  reviewedBy?: {
+    _id: string;
+    name: string;
+    email: string;
+  };
+  reviewedAt?: string;
   createdAt?: string;
   updatedAt?: string;
 }

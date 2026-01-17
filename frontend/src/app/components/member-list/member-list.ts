@@ -2,8 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MemberService } from '../../services/member.service';
+import { AuthService } from '../../services/auth.service';
 import { Member } from '../../models/member.model';
 
+/**
+ * Member List Component
+ * 
+ * Displays a list of all library members.
+ * Admins can see an "Add Member" button to create new members.
+ */
 @Component({
   selector: 'app-member-list',
   standalone: true,
@@ -14,8 +21,12 @@ import { Member } from '../../models/member.model';
 export class MemberListComponent implements OnInit {
   members: Member[] = [];
   isLoading: boolean = false;
+  errorMessage: string = '';
 
-  constructor(private memberService: MemberService) {}
+  constructor(
+    private memberService: MemberService,
+    public authService: AuthService
+  ) {}
 
   ngOnInit(): void {
     this.loadMembers();
@@ -23,6 +34,7 @@ export class MemberListComponent implements OnInit {
 
   loadMembers(): void {
     this.isLoading = true;
+    this.errorMessage = '';
     this.memberService.getMembers().subscribe({
       next: (response) => {
         if (response.success && response.data) {
@@ -36,7 +48,7 @@ export class MemberListComponent implements OnInit {
         console.error('Error loading members:', error);
         this.members = [];
         this.isLoading = false;
-        alert('Error: ' + (error.error?.message || 'Failed to load members. Please try again.'));
+        this.errorMessage = error.error?.message || 'Failed to load members. Please try again.';
       }
     });
   }

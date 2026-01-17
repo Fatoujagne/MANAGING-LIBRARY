@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { BookService } from '../../services/book.service';
+import { AuthService } from '../../services/auth.service';
 import { Book } from '../../models/book.model';
 
 @Component({
@@ -18,12 +19,14 @@ export class BookFormComponent implements OnInit {
   bookId: string = '';
   isLoading: boolean = false;
   errorMessage: string = '';
+  isAdmin: boolean = false;
 
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private bookService: BookService
+    private bookService: BookService,
+    private authService: AuthService
   ) {
     this.bookForm = this.fb.group({
       title: ['', [Validators.required]],
@@ -36,6 +39,7 @@ export class BookFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.bookId = this.route.snapshot.paramMap.get('id') || '';
+    this.isAdmin = this.authService.isAdmin();
     if (this.bookId) {
       this.isEditMode = true;
       this.loadBook();
@@ -90,11 +94,17 @@ export class BookFormComponent implements OnInit {
           next: (response) => {
             this.isLoading = false;
             if (response.success && response.data) {
+              // Show success message
+              const message = this.isAdmin 
+                ? 'Book created successfully!' 
+                : 'Book request submitted successfully! It will be reviewed by an admin.';
+              alert(message);
+              
               const bookId = response.data._id || response.data.id;
               if (bookId) {
                 this.router.navigate(['/books', bookId]);
               } else {
-                this.errorMessage = 'Book created but ID not found';
+                this.router.navigate(['/books']);
               }
             } else {
               this.errorMessage = response.message || 'Error creating book';

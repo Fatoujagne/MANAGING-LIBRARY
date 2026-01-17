@@ -1,6 +1,6 @@
-# Library Management System - Frontend
+# LibraryManagement - Frontend
 
-Angular frontend application for the Library Management System.
+Angular frontend application for LibraryManagement, a modern digital library platform.
 
 ## Features
 
